@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Question Paper Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<style>
+    * {box-sizing: border-box; margin:0; padding:0;}
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* LEFT PANEL */
+.left-panel {
+    width: 30%;
+    background: #fff;
+    padding: 30px 25px;
+    border-radius: 0 20px 20px 0;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    overflow-y: auto;
+}
+
+.left-panel h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #3b7ddd;
+    margin-bottom: 10px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: #555;
+}
+
+.input-group input[type="number"],
+.input-group select,
+.input-group input[type="file"] {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    transition: 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: #3b7ddd;
+    box-shadow: 0 0 10px rgba(59,125,221,0.3);
+}
+
+/* Create Button */
+.create-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: linear-gradient(45deg, #ff7e5f, #feb47b);
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.create-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+/* RIGHT PANEL */
+.right-panel {
+    width: 70%;
+    padding: 30px 40px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Buttons */
+.top-buttons {
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    display: flex;
+    gap: 15px;
+}
+
+.top-buttons button {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: linear-gradient(45deg,#3b7ddd,#1c5bbf);
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.top-buttons button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+/* Paper Box */
+.paper-box {
+    margin-top: 47px;
+    flex: 1;
+    background: #f9faff;
+    border-radius: 20px;
+    padding: 25px 30px;
+    border: 2px solid #e0e0e0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    overflow-y: auto;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #2c3e50;
+    position: relative;
+    text-align: center;
+}
+
+.paper-box h2 {
+    font-size: 22px;
+    color: #3b7ddd;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Spinner */
+#spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border: 4px solid #ddd;
+    border-top: 4px solid #3b7ddd;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Sliders */
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.slider-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+input[type=range] {
+    width: 100%;
+    height: 6px;
+    background: #ddd;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    background: #0ea5a4;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    cursor: pointer;
+}
+
+input[type=range]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    background: #0ea5a4;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    cursor: pointer;
+}
+
+.value-box {
+    margin-top: 5px;
+    width: 50px;
+    height: 28px;
+    background: #0ea5a4;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    user-select: none;
+}
+
+.labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+</style>
+<!-- LEFT PANEL -->
+<div class="left-panel">
+    <h2>Generate Paper</h2>
+
+    <div class="input-group">
+        <label>Upload File (PDF)</label>
+        <input type="file" accept=".pdf" id="fileInput">
+    </div>
+
+    <div class="input-group">
+        <label>Difficulty Level</label>
+        <select id="difficultySelect">
+            <option value="easy">Easy</option>
+            <option value="hard">Hard</option>
+            <option value="conceptual">Conceptual</option>
+        </select>
+    </div>
+
+    <!-- Sliders -->
+    <div class="slider-group">
+        <label>MCQ Size</label>
+        <div class="slider-wrapper">
+            <input type="range" min="0" max="20" value="0" id="mcqSlider">
+            <div class="labels"><span>0</span><span>20</span></div>
+            <div class="value-box" id="mcqValue">0</div>
+        </div>
+
+        <label>Fill in the Blank</label>
+        <div class="slider-wrapper">
+            <input type="range" min="0" max="20" value="0" id="fillSlider">
+            <div class="labels"><span>0</span><span>20</span></div>
+            <div class="value-box" id="fillValue">0</div>
+        </div>
+
+        <label>Short Question Size</label>
+        <div class="slider-wrapper">
+            <input type="range" min="0" max="20" value="0" id="shortSlider">
+            <div class="labels"><span>0</span><span>20</span></div>
+            <div class="value-box" id="shortValue">0</div>
+        </div>
+
+        <label>Long Question Size</label>
+        <div class="slider-wrapper">
+            <input type="range" min="0" max="20" value="0" id="longSlider">
+            <div class="labels"><span>0</span><span>20</span></div>
+            <div class="value-box" id="longValue">0</div>
+        </div>
+    </div>
+
+    <!-- CREATE BUTTON -->
+    <div class="input-group">
+        <button id="createPaper" class="create-btn">Create Paper</button>
+    </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+    <!-- Save Buttons -->
+    <div class="top-buttons">
+        <button id="savePDF">Save as PDF</button>
+        <button id="saveTXT">Save as TXT</button>
+    </div>
+
+    <!-- Paper Preview -->
+    <div class="paper-box" id="paperBox">
+        <div id="spinner"></div>
+        <div id="paperContent">
+            <h2>Your Generated Paper Appears Here</h2>
+            <p>The generated questions will appear here once you upload a file and select sizes.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+        // Slider updates
+    const sliders = [
+        {id:'mcqSlider', box:'mcqValue'},
+        {id:'fillSlider', box:'fillValue'},
+        {id:'shortSlider', box:'shortValue'},
+        {id:'longSlider', box:'longValue'}
+    ];
+
+    sliders.forEach(s => {
+        const slider = document.getElementById(s.id);
+        const box = document.getElementById(s.box);
+        slider.addEventListener('input', () => {
+            box.textContent = slider.value;
+        });
+    });
+
+    // Create Paper Button with spinner
+    document.getElementById('createPaper').addEventListener('click', () => {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+        if(!file){ alert("Please upload a PDF file!"); return; }
+
+        const formdata = new FormData();
+        const paperBox = document.getElementById('paperBox');
+        const spinner = document.getElementById('spinner');
+        const paperContent = document.getElementById('paperContent');
+
+        // Show spinner
+        spinner.style.display = "block";
+        paperContent.innerHTML = ''; // clear old content
+
+        formdata.append("file", file);
+        formdata.append('mcq', document.getElementById('mcqSlider').value);
+        formdata.append('fill', document.getElementById('fillSlider').value);
+        formdata.append('shortq', document.getElementById('shortSlider').value);
+        formdata.append('longq', document.getElementById('longSlider').value);
+        formdata.append('difficulty', document.getElementById('difficultySelect').value);
+
+        fetch("/generate_questions", {
+            method:"POST",
+            body: formdata
+        })
+        .then(res => res.json())
+        .then(data => {
+            spinner.style.display = "none";
+            paperContent.innerText = data.question_generated;
+        })
+        .catch(err => {
+            spinner.style.display = "none";
+            paperContent.innerText = "Error generating paper. Try again.";
+            console.error(err);
+        });
+    });
+
+    // Save TXT Button
+    document.getElementById('saveTXT').addEventListener('click', () => {
+        const paperContent = document.getElementById('paperContent').innerText;
+        fetch("/text_download", {
+            method:"POST",
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({'content': paperContent})
+        })
+        .then(res=>res.blob())
+        .then(blob=>{
+            const url=window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href=url;
+            a.download="Generated.txt";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        });
+    });
+     document.getElementById('savePDF').addEventListener('click', () => {
+        const paperContent = document.getElementById('paperContent').innerText;
+        console.log(paperContent);
+        fetch("/pdf_download", {
+            method:"POST",
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({'content': paperContent})
+        })
+        .then(res=>res.blob())
+        .then(blob=>{
+            const url=window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href=url;
+            a.download="Generated.pdf";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        });
+    });
+
+</script>
+
+</body>
+</html>
